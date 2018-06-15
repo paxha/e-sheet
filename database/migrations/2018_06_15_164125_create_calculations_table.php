@@ -19,8 +19,9 @@ class CreateCalculationsTable extends Migration
             $table->string('description')->nullable();
             $table->integer('height');
             $table->integer('width');
+            $table->integer('qty')->default(1);
             $table->enum('type', ['add', 'sub']);
-            $table->integer('total')->virtualAs('height * width');
+            $table->integer('total')->virtualAs('(height * width) * qty');
             $table->timestamps();
 
             $table->foreign('sheet_id')->references('id')->on('sheets')->onDelete('cascade');
