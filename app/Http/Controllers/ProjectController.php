@@ -66,7 +66,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return Project::with('sheets')->where('id', $project->id)->get();
+//        return Project::with('sheets')->where('id', $project->id)->get();
+        return $project;
     }
 
     /**

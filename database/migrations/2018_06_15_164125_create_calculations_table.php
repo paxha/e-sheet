@@ -17,11 +17,13 @@ class CreateCalculationsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('sheet_id');
             $table->string('description')->nullable();
-            $table->bigInteger('height');
-            $table->bigInteger('width');
+            $table->integer('height_feet');
+            $table->integer('height_inches');
+            $table->integer('width_feet');
+            $table->integer('width_inches');
             $table->integer('qty')->default(1);
             $table->enum('type', ['add', 'sub']);
-            $table->unsignedBigInteger('total')->virtualAs('(height * width) * qty');
+            $table->unsignedBigInteger('total')->virtualAs('(((height_feet * width_feet) * 12) + (height_feet * width_inches) + (width_feet * height_inches))* qty');
             $table->timestamps();
 
             $table->foreign('sheet_id')->references('id')->on('sheets')->onDelete('cascade');

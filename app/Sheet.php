@@ -12,4 +12,8 @@ class Sheet extends Model
     {
         return $this->hasMany('App\Calculation');
     }
+
+    public function project(){
+        return $this->belongsTo('App\Project');
+    }
 }

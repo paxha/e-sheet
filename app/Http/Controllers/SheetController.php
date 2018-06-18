@@ -64,7 +64,7 @@ class SheetController extends Controller
      */
     public function show(Sheet $sheet)
     {
-        return $sheet;
+        return Sheet::with('project')->where('id', $sheet->id)->first();
     }
 
     /**

@@ -121,7 +121,7 @@
                     this.projects = r.data;
                     this.length = this.projects.data.length;
                 })
-                .catch((e) => console.log(e))
+                .catch((e) => console.log(e));
         },
         methods: {
             loadSheets(id) {
@@ -142,10 +142,15 @@
                     .then(response => this.sheets = response.data);
             },
             refresh(response) {
-                this.projects = response;
+                axios.get('http://esheet.test/projects')
+                    .then((r) => {
+                        this.projects = r.data;
+                        this.length = this.projects.data.length;
+                    })
+                    .catch((e) => console.log(e));
             },
             refreshSheets(response) {
-                this.sheets = response;
+                this.loadSheets(this.project_id);
             },
             setSheetId(id, sheet_name){
                 this.sheet_id = id;

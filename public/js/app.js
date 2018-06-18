@@ -25382,7 +25382,7 @@ var routes = [{
     path: '/',
     component: __WEBPACK_IMPORTED_MODULE_1__components_Home___default.a
 }, {
-    path: '/sheet/:id',
+    path: '/sheet/:sheet_id',
     component: __WEBPACK_IMPORTED_MODULE_2__components_Sheet___default.a,
     props: true
 }];
@@ -50398,7 +50398,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -50603,23 +50603,30 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('editSheet', __webpack_req
             });
         },
         refresh: function refresh(response) {
-            this.projects = response;
+            var _this5 = this;
+
+            axios.get('http://esheet.test/projects').then(function (r) {
+                _this5.projects = r.data;
+                _this5.length = _this5.projects.data.length;
+            }).catch(function (e) {
+                return console.log(e);
+            });
         },
         refreshSheets: function refreshSheets(response) {
-            this.sheets = response;
+            this.loadSheets(this.project_id);
         },
         setSheetId: function setSheetId(id, sheet_name) {
             this.sheet_id = id;
             this.sheet_name = sheet_name;
         },
         deleteSheet: function deleteSheet(id) {
-            var _this5 = this;
+            var _this6 = this;
 
             if (!confirm('Are you sure you want to delete this sheet?')) {
                 return;
             }
             axios.delete('http://esheet.test/sheets/' + id).then(function (r) {
-                return _this5.loadSheets(_this5.project_id);
+                return _this6.loadSheets(_this6.project_id);
             }).catch(function (e) {
                 return console.log(e);
             });
@@ -51894,7 +51901,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -51936,21 +51943,50 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+Vue.component('newCalculation', __webpack_require__(80));
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "Sheet",
-    props: ['id'],
+    props: ['sheet_id'],
     data: function data() {
-        return { 'calculations': [] };
+        return {
+            'calculations': [],
+            'project_id': '',
+            'project_name': '',
+            'sheet_name': '',
+            'created_at': ''
+        };
     },
     mounted: function mounted() {
-        var _this = this;
+        this.refresh();
+    },
 
-        axios.get('http://esheet.test/sheet-calculations/' + this.id).then(function (r) {
-            return _this.calculations = r.data;
-        }).catch(function (e) {
-            return console.log(e);
-        });
+    methods: {
+        refresh: function refresh() {
+            var _this = this;
+
+            axios.get('http://esheet.test/sheet-calculations/' + this.sheet_id).then(function (r) {
+                _this.calculations = r.data;
+                _this.project_id = r.data[0].sheet.project_id;
+                _this.sheet_name = r.data[0].sheet.name;
+                _this.created_at = r.data[0].sheet.created_at;
+                _this.project_name = r.data[0].sheet.project.name;
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        }
     }
 });
 
@@ -51962,32 +51998,67 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("table", { staticClass: "table table-striped table-bordered" }, [
-      _vm._m(0),
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
+      _c("h4", { staticClass: "text-center" }, [
+        _vm._v(_vm._s(_vm.project_name))
+      ]),
+      _vm._v(" "),
+      _c("p", { staticClass: "float-right text-muted" }, [
+        _vm._v(_vm._s(_vm.created_at))
+      ]),
+      _vm._v(" "),
+      _c("p", [_vm._v(_vm._s(_vm.sheet_name))]),
       _vm._v(" "),
       _c(
-        "tbody",
-        _vm._l(_vm.calculations, function(calculation, index) {
-          return _c("tr", [
-            _c("th", [_vm._v(_vm._s(++index))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.description))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.height))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.width))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.qty))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.type))]),
-            _vm._v(" "),
-            _c("td", [_vm._v(_vm._s(calculation.total))])
-          ])
-        })
-      )
-    ])
-  ])
+        "button",
+        {
+          staticClass: "float-right btn btn-sm btn-primary",
+          attrs: { "data-toggle": "modal", "data-target": "#new-calculation" }
+        },
+        [_vm._v("New Calculation")]
+      ),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
+      _c("table", { staticClass: "table table-striped table-bordered" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c(
+          "tbody",
+          _vm._l(_vm.calculations, function(calculation, index) {
+            return _c("tr", [
+              _c("th", [_vm._v(_vm._s(++index))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.description))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.height))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.width))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.qty))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.type))]),
+              _vm._v(" "),
+              _c("td", [_vm._v(_vm._s(calculation.total))]),
+              _vm._v(" "),
+              _vm._m(1, true)
+            ])
+          })
+        )
+      ]),
+      _vm._v(" "),
+      _c("new-calculation", {
+        attrs: { sheet_id: _vm.sheet_id },
+        on: { newCalculationCreated: _vm.refresh }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
@@ -52008,7 +52079,23 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Add / Sub")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Total")])
+        _c("th", [_vm._v("Total")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", [
+      _c("a", { attrs: { href: "javascript:void(0)" } }, [
+        _c("i", { staticClass: "fa fa-trash text-danger btn btn-sm" })
+      ]),
+      _vm._v(" "),
+      _c("a", { attrs: { href: "javascript:void(0)" } }, [
+        _c("i", { staticClass: "fa fa-edit text-info btn btn-sm" })
       ])
     ])
   }
@@ -52027,6 +52114,553 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(81)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(83)
+/* template */
+var __vue_template__ = __webpack_require__(84)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-3b0eb280"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/NewCalculation.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-3b0eb280", Component.options)
+  } else {
+    hotAPI.reload("data-v-3b0eb280", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(82);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("1d1abb5c", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3b0eb280\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NewCalculation.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-3b0eb280\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./NewCalculation.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "NewCalculation",
+    props: ['sheet_id'],
+    data: function data() {
+        return {
+            'description': '',
+            'type': '',
+            'height_feet': '',
+            'height_inches': '',
+            'width_feet': '',
+            'width_inches': '',
+            'qty': ''
+        };
+    },
+
+    methods: {
+        save: function save() {
+            var _this = this;
+
+            axios.post('http://esheet.test/calculations', {
+                sheet_id: this.sheet_id,
+                description: this.description,
+                type: this.type,
+                height_feet: this.height_feet,
+                height_inches: this.height_inches,
+                width_feet: this.width_feet,
+                width_inches: this.width_inches,
+                qty: this.qty
+            }).then(function (r) {
+                _this.$emit('newCalculationCreated', r.data);
+                _this.description = '';
+                _this.type = '';
+                _this.height_feet = '';
+                _this.height_inches = '';
+                _this.width_feet = '';
+                _this.width_inches = '';
+                _this.qty = '';
+                $('#new-calculation').modal('hide');
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "modal fade bd-example-modal-lg",
+      attrs: {
+        id: "new-calculation",
+        tabindex: "-1",
+        role: "dialog",
+        "aria-labelledby": "new-calculation",
+        "aria-hidden": "true"
+      }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
+        [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "description" } }, [
+                  _vm._v("Calculation Description:")
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.description,
+                      expression: "description"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    id: "description",
+                    placeholder: "abc..."
+                  },
+                  domProps: { value: _vm.description },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.description = $event.target.value
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "type" } }, [_vm._v("Type")]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.type,
+                        expression: "type"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "type" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.type = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  [
+                    _c("option", { attrs: { value: "add", selected: "" } }, [
+                      _vm._v("Add")
+                    ]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "sub" } }, [_vm._v("Sub")])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("p", [_vm._v("Height")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "height-feet" } }, [
+                        _vm._v("Height Feet")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.height_feet,
+                            expression: "height_feet"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "height-feet" },
+                        domProps: { value: _vm.height_feet },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.height_feet = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "height-inches" } }, [
+                        _vm._v("Height Inches")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.height_inches,
+                            expression: "height_inches"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "height-inches" },
+                        domProps: { value: _vm.height_inches },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.height_inches = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("p", [_vm._v("Width")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "width-feet" } }, [
+                        _vm._v("Width Feet")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.width_feet,
+                            expression: "width_feet"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "width-feet" },
+                        domProps: { value: _vm.width_feet },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.width_feet = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "width-inches" } }, [
+                        _vm._v("Width Inches")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.width_inches,
+                            expression: "width_inches"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "width-inches" },
+                        domProps: { value: _vm.width_inches },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.width_inches = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "qty" } }, [_vm._v("Quantity")]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.qty,
+                      expression: "qty"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "number", id: "qty" },
+                  domProps: { value: _vm.qty },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.qty = $event.target.value
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [_vm._v("Close")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.save }
+                },
+                [_vm._v("Save changes")]
+              )
+            ])
+          ])
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v("Create New Calculation")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-3b0eb280", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
