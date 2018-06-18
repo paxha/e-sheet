@@ -16,7 +16,7 @@ const routes = [
         component: home
     },
     {
-        path: '/sheet/:id',
+        path: '/sheet/:sheet_id',
         component: sheet,
         props: true
     }
