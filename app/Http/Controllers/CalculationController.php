@@ -95,7 +95,7 @@ class CalculationController extends Controller
      */
     public function show(Calculation $calculation)
     {
-        //
+        return $calculation;
     }
 
     /**
@@ -118,18 +118,43 @@ class CalculationController extends Controller
      */
     public function update(Request $request, Calculation $calculation)
     {
-        //
+        if (!$request->height_feet){
+            $request['height_feet'] = 0;
+        }
+        if (!$request->height_inches){
+            $request['height_inches'] = 0;
+        }
+        if (!$request->width_feet){
+            $request['width_feet'] = 0;
+        }
+        if (!$request->width_inches){
+            $request['width_inches'] = 0;
+        }
+        if (!$request->qty){
+            $request['qty'] = 1;
+        }
+
+        $calculation->description = $request->description;
+        $calculation->height_feet = $request->height_feet;
+        $calculation->height_inches = $request->height_inches;
+        $calculation->width_feet = $request->width_feet;
+        $calculation->width_inches = $request->width_inches;
+        $calculation->qty = $request->qty;
+        $calculation->type = $request->type;
+
+        $calculation->save();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Calculation  $calculation
+     * @param  \App\Calculation $calculation
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Calculation $calculation)
     {
-        //
+        $calculation->delete();
     }
 
     public function showBySheet(Sheet $sheet){

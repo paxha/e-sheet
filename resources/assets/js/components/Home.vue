@@ -71,8 +71,13 @@
                                         </router-link>
                                     </td>
                                     <td>
-                                        <a href="javascript:void(0)" v-on:click="deleteSheet(sheet.id)"><i class="fa fa-trash text-danger"></i></a>
-                                        <a href="javascript:void(0)"  data-toggle="modal" data-target="#edit-sheet" v-on:click="setSheetId(sheet.id, sheet.name)"><i class="fa fa-edit text-info"></i></a>
+                                        <button class="btn btn-sm btn-outline-danger" @click="deleteSheet(sheet.id)"><i
+                                                class="fa fa-trash"></i> Trash
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info" data-toggle="modal"
+                                                data-target="#edit-sheet" @click="setSheet(sheet.id)"><i
+                                                class="fa fa-edit"></i> Edit
+                                        </button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -89,7 +94,7 @@
         </div>
         <new-project @newProjectCreated="refresh"></new-project>
         <new-sheet @newSheetCreated="refreshSheets" v-bind:project_id="project_id"></new-sheet>
-        <edit-sheet @sheetUpdated="refreshSheets" v-bind:project_id="project_id" v-bind:sheet_id="sheet_id" v-bind:sheet_name="sheet_name"></edit-sheet>
+        <edit-sheet @sheetUpdated="refreshSheets" v-bind:project_id="project_id" :sheet="selectedSheet"></edit-sheet>
     </div>
 </template>
 
@@ -111,8 +116,7 @@
                 'project_id': '',
                 'length': '',
                 'sheets_length': '',
-                'sheet_id': '',
-                'sheet_name': ''
+                'selectedSheet': {}
             }
         },
         mounted() {
@@ -152,15 +156,16 @@
             refreshSheets(response) {
                 this.loadSheets(this.project_id);
             },
-            setSheetId(id, sheet_name){
-                this.sheet_id = id;
-                this.sheet_name = sheet_name;
+            setSheet(id) {
+                axios.get('http://esheet.test/sheets/' + id)
+                    .then((r) => this.selectedSheet = r.data)
+                    .catch((e) => console.log(e));
             },
-            deleteSheet(id){
+            deleteSheet(id) {
                 if (!confirm('Are you sure you want to delete this sheet?')) {
                     return
                 }
-                axios.delete('http://esheet.test/sheets/'+ id)
+                axios.delete('http://esheet.test/sheets/' + id)
                     .then((r) => this.loadSheets(this.project_id))
                     .catch((e) => console.log(e))
             }

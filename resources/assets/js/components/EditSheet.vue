@@ -13,7 +13,7 @@
                     <div class="form-group">
                         <label for="sheet-name">Sheet Name:</label>
                         <input type="text" id="sheet-name" class="form-control" placeholder="abc..."
-                               v-model="sheet_name">
+                               v-model="sheet.name">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -28,19 +28,19 @@
 <script>
     export default {
         name: "EditSheet",
-        props: ['project_id', 'sheet_id', 'sheet_name'],
+        props: ['project_id', 'sheet'],
         data() {
             return {
             }
         },
         methods: {
             save() {
-                if (this.sheet_name === '') {
+                if (this.sheet.name === '') {
                     return
                 }
-                axios.put('http://esheet.test/sheets/' + this.sheet_id, {
+                axios.put('http://esheet.test/sheets/' + this.sheet.id, {
                     project_id: this.project_id,
-                    name: this.sheet_name
+                    name: this.sheet.name
                 })
                     .then((r) => {
                         this.$emit('sheetUpdated', r.data);

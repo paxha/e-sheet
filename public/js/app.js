@@ -50398,7 +50398,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -50539,6 +50539,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -50557,8 +50562,7 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('editSheet', __webpack_req
             'project_id': '',
             'length': '',
             'sheets_length': '',
-            'sheet_id': '',
-            'sheet_name': ''
+            'selectedSheet': {}
         };
     },
     mounted: function mounted() {
@@ -50615,18 +50619,23 @@ __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('editSheet', __webpack_req
         refreshSheets: function refreshSheets(response) {
             this.loadSheets(this.project_id);
         },
-        setSheetId: function setSheetId(id, sheet_name) {
-            this.sheet_id = id;
-            this.sheet_name = sheet_name;
+        setSheet: function setSheet(id) {
+            var _this6 = this;
+
+            axios.get('http://esheet.test/sheets/' + id).then(function (r) {
+                return _this6.selectedSheet = r.data;
+            }).catch(function (e) {
+                return console.log(e);
+            });
         },
         deleteSheet: function deleteSheet(id) {
-            var _this6 = this;
+            var _this7 = this;
 
             if (!confirm('Are you sure you want to delete this sheet?')) {
                 return;
             }
             axios.delete('http://esheet.test/sheets/' + id).then(function (r) {
-                return _this6.loadSheets(_this6.project_id);
+                return _this7.loadSheets(_this7.project_id);
             }).catch(function (e) {
                 return console.log(e);
             });
@@ -51351,7 +51360,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "EditSheet",
-    props: ['project_id', 'sheet_id', 'sheet_name'],
+    props: ['project_id', 'sheet'],
     data: function data() {
         return {};
     },
@@ -51360,12 +51369,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         save: function save() {
             var _this = this;
 
-            if (this.sheet_name === '') {
+            if (this.sheet.name === '') {
                 return;
             }
-            axios.put('http://esheet.test/sheets/' + this.sheet_id, {
+            axios.put('http://esheet.test/sheets/' + this.sheet.id, {
                 project_id: this.project_id,
-                name: this.sheet_name
+                name: this.sheet.name
             }).then(function (r) {
                 _this.$emit('sheetUpdated', r.data);
                 $('#edit-sheet').modal('hide');
@@ -51412,8 +51421,8 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.sheet_name,
-                    expression: "sheet_name"
+                    value: _vm.sheet.name,
+                    expression: "sheet.name"
                   }
                 ],
                 staticClass: "form-control",
@@ -51422,13 +51431,13 @@ var render = function() {
                   id: "sheet-name",
                   placeholder: "abc..."
                 },
-                domProps: { value: _vm.sheet_name },
+                domProps: { value: _vm.sheet.name },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.sheet_name = $event.target.value
+                    _vm.$set(_vm.sheet, "name", $event.target.value)
                   }
                 }
               })
@@ -51672,9 +51681,10 @@ var render = function() {
                               _vm._v(" "),
                               _c("td", [
                                 _c(
-                                  "a",
+                                  "button",
                                   {
-                                    attrs: { href: "javascript:void(0)" },
+                                    staticClass:
+                                      "btn btn-sm btn-outline-danger",
                                     on: {
                                       click: function($event) {
                                         _vm.deleteSheet(sheet.id)
@@ -51682,30 +51692,32 @@ var render = function() {
                                     }
                                   },
                                   [
-                                    _c("i", {
-                                      staticClass: "fa fa-trash text-danger"
-                                    })
+                                    _c("i", { staticClass: "fa fa-trash" }),
+                                    _vm._v(
+                                      " Trash\n                                    "
+                                    )
                                   ]
                                 ),
                                 _vm._v(" "),
                                 _c(
-                                  "a",
+                                  "button",
                                   {
+                                    staticClass: "btn btn-sm btn-outline-info",
                                     attrs: {
-                                      href: "javascript:void(0)",
                                       "data-toggle": "modal",
                                       "data-target": "#edit-sheet"
                                     },
                                     on: {
                                       click: function($event) {
-                                        _vm.setSheetId(sheet.id, sheet.name)
+                                        _vm.setSheet(sheet.id)
                                       }
                                     }
                                   },
                                   [
-                                    _c("i", {
-                                      staticClass: "fa fa-edit text-info"
-                                    })
+                                    _c("i", { staticClass: "fa fa-edit" }),
+                                    _vm._v(
+                                      " Edit\n                                    "
+                                    )
                                   ]
                                 )
                               ])
@@ -51740,11 +51752,7 @@ var render = function() {
       }),
       _vm._v(" "),
       _c("edit-sheet", {
-        attrs: {
-          project_id: _vm.project_id,
-          sheet_id: _vm.sheet_id,
-          sheet_name: _vm.sheet_name
-        },
+        attrs: { project_id: _vm.project_id, sheet: _vm.selectedSheet },
         on: { sheetUpdated: _vm.refreshSheets }
       })
     ],
@@ -51901,7 +51909,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -51953,9 +51961,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 
 Vue.component('newCalculation', __webpack_require__(80));
+Vue.component('editCalculation', __webpack_require__(85));
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "Sheet",
@@ -51966,7 +51976,8 @@ Vue.component('newCalculation', __webpack_require__(80));
             'project_id': '',
             'project_name': '',
             'sheet_name': '',
-            'created_at': ''
+            'created_at': '',
+            'calculation': {}
         };
     },
     mounted: function mounted() {
@@ -51983,6 +51994,27 @@ Vue.component('newCalculation', __webpack_require__(80));
                 _this.sheet_name = r.data[0].sheet.name;
                 _this.created_at = r.data[0].sheet.created_at;
                 _this.project_name = r.data[0].sheet.project.name;
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        },
+        getCalculation: function getCalculation(id) {
+            var _this2 = this;
+
+            axios.get('http://esheet.test/calculations/' + id).then(function (r) {
+                _this2.calculation = r.data;
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        },
+        deleteCalculation: function deleteCalculation(id) {
+            var _this3 = this;
+
+            if (!confirm('Are you sure you want to delete this calculation?')) {
+                return;
+            }
+            axios.delete('http://esheet.test/calculations/' + id).then(function (r) {
+                _this3.refresh();
             }).catch(function (e) {
                 return console.log(e);
             });
@@ -52046,7 +52078,37 @@ var render = function() {
               _vm._v(" "),
               _c("td", [_vm._v(_vm._s(calculation.total))]),
               _vm._v(" "),
-              _vm._m(1, true)
+              _c("td", [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-outline-danger",
+                    on: {
+                      click: function($event) {
+                        _vm.deleteCalculation(calculation.id)
+                      }
+                    }
+                  },
+                  [_c("i", { staticClass: "fa fa-trash" }), _vm._v(" Trash")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-outline-info",
+                    attrs: {
+                      "data-toggle": "modal",
+                      "data-target": "#edit-calculation"
+                    },
+                    on: {
+                      click: function($event) {
+                        _vm.getCalculation(calculation.id)
+                      }
+                    }
+                  },
+                  [_c("i", { staticClass: "fa fa-edit" }), _vm._v(" Edit")]
+                )
+              ])
             ])
           })
         )
@@ -52055,6 +52117,11 @@ var render = function() {
       _c("new-calculation", {
         attrs: { sheet_id: _vm.sheet_id },
         on: { newCalculationCreated: _vm.refresh }
+      }),
+      _vm._v(" "),
+      _c("edit-calculation", {
+        attrs: { sheet_id: _vm.sheet_id, calculation: _vm.calculation },
+        on: { sheetUpdated: _vm.refresh }
       })
     ],
     1
@@ -52082,20 +52149,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Total")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("a", { attrs: { href: "javascript:void(0)" } }, [
-        _c("i", { staticClass: "fa fa-trash text-danger btn btn-sm" })
-      ]),
-      _vm._v(" "),
-      _c("a", { attrs: { href: "javascript:void(0)" } }, [
-        _c("i", { staticClass: "fa fa-edit text-info btn btn-sm" })
       ])
     ])
   }
@@ -52659,6 +52712,550 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-3b0eb280", module.exports)
+  }
+}
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(86)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(88)
+/* template */
+var __vue_template__ = __webpack_require__(89)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-7f3891f8"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/EditCalculation.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-7f3891f8", Component.options)
+  } else {
+    hotAPI.reload("data-v-7f3891f8", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(87);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("138c7858", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7f3891f8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EditCalculation.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-7f3891f8\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./EditCalculation.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 88 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "EditCalculation",
+    props: ['calculation'],
+    methods: {
+        save: function save() {
+            var _this = this;
+
+            axios.put('http://esheet.test/calculations/' + this.calculation.id, {
+                description: this.calculation.description,
+                height_feet: this.calculation.height_feet,
+                height_inches: this.calculation.height_inches,
+                width_feet: this.calculation.width_feet,
+                width_inches: this.calculation.width_inches,
+                qty: this.calculation.qty,
+                type: this.calculation.type
+            }).then(function (r) {
+                _this.$emit('sheetUpdated', r.data);
+                $('#edit-calculation').modal('hide');
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "modal fade bd-example-modal-lg",
+      attrs: {
+        id: "edit-calculation",
+        tabindex: "-1",
+        role: "dialog",
+        "aria-labelledby": "edit-calculation",
+        "aria-hidden": "true"
+      }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "modal-dialog modal-lg", attrs: { role: "document" } },
+        [
+          _c("div", { staticClass: "modal-content" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "description" } }, [
+                  _vm._v("Calculation Description:")
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.calculation.description,
+                      expression: "calculation.description"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    id: "description",
+                    placeholder: "abc..."
+                  },
+                  domProps: { value: _vm.calculation.description },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.calculation,
+                        "description",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "type" } }, [_vm._v("Type")]),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.calculation.type,
+                        expression: "calculation.type"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: { id: "type" },
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.$set(
+                          _vm.calculation,
+                          "type",
+                          $event.target.multiple
+                            ? $$selectedVal
+                            : $$selectedVal[0]
+                        )
+                      }
+                    }
+                  },
+                  [
+                    _c("option", { attrs: { value: "add" } }, [_vm._v("Add")]),
+                    _vm._v(" "),
+                    _c("option", { attrs: { value: "sub" } }, [_vm._v("Sub")])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("p", [_vm._v("Height")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "height-feet" } }, [
+                        _vm._v("Height Feet")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.calculation.height_feet,
+                            expression: "calculation.height_feet"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "height-feet" },
+                        domProps: { value: _vm.calculation.height_feet },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.calculation,
+                              "height_feet",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "height-inches" } }, [
+                        _vm._v("Height Inches")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.calculation.height_inches,
+                            expression: "calculation.height_inches"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "height-inches" },
+                        domProps: { value: _vm.calculation.height_inches },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.calculation,
+                              "height_inches",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("p", [_vm._v("Width")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "width-feet" } }, [
+                        _vm._v("Width Feet")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.calculation.width_feet,
+                            expression: "calculation.width_feet"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "width-feet" },
+                        domProps: { value: _vm.calculation.width_feet },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.calculation,
+                              "width_feet",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col" }, [
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("label", { attrs: { for: "width-inches" } }, [
+                        _vm._v("Width Inches")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.calculation.width_inches,
+                            expression: "calculation.width_inches"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "number", id: "width-inches" },
+                        domProps: { value: _vm.calculation.width_inches },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(
+                              _vm.calculation,
+                              "width_inches",
+                              $event.target.value
+                            )
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "qty" } }, [_vm._v("Quantity")]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.calculation.qty,
+                      expression: "calculation.qty"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { type: "number", id: "qty" },
+                  domProps: { value: _vm.calculation.qty },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.calculation, "qty", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button", "data-dismiss": "modal" }
+                },
+                [_vm._v("Close")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.save }
+                },
+                [_vm._v("Save changes")]
+              )
+            ])
+          ])
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "exampleModalLabel" } },
+        [_vm._v("Edit Calculation")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+      )
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-7f3891f8", module.exports)
   }
 }
 

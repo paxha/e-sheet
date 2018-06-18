@@ -29,19 +29,21 @@
                 <td>{{ calculation.type }}</td>
                 <td>{{ calculation.total }}</td>
                 <td>
-                    <a href="javascript:void(0)"><i class="fa fa-trash text-danger btn btn-sm"></i></a>
-                    <a href="javascript:void(0)"><i class="fa fa-edit text-info btn btn-sm"></i></a>
+                    <button class="btn btn-sm btn-outline-danger" @click="deleteCalculation(calculation.id)"><i class="fa fa-trash"></i> Trash</button>
+                    <button class="btn btn-sm btn-outline-info" @click="getCalculation(calculation.id)" data-toggle="modal" data-target="#edit-calculation"><i class="fa fa-edit"></i> Edit</button>
                 </td>
             </tr>
             </tbody>
         </table>
         <new-calculation v-bind:sheet_id="sheet_id" @newCalculationCreated="refresh"></new-calculation>
+        <edit-calculation v-bind:sheet_id="sheet_id" :calculation="calculation" @sheetUpdated="refresh"></edit-calculation>
     </div>
 </template>
 
 <script>
 
     Vue.component('newCalculation', require('./NewCalculation'));
+    Vue.component('editCalculation', require('./EditCalculation'));
 
     export default {
         name: "Sheet",
@@ -52,7 +54,8 @@
                 'project_id': '',
                 'project_name': '',
                 'sheet_name': '',
-                'created_at': ''
+                'created_at': '',
+                'calculation': {}
             };
         },
         mounted() {
@@ -67,6 +70,23 @@
                         this.sheet_name = r.data[0].sheet.name;
                         this.created_at = r.data[0].sheet.created_at;
                         this.project_name = r.data[0].sheet.project.name;
+                    })
+                    .catch((e) => console.log(e));
+            },
+            getCalculation(id){
+                axios.get('http://esheet.test/calculations/' + id)
+                    .then((r) => {
+                        this.calculation = r.data;
+                    })
+                    .catch((e) => console.log(e));
+            },
+            deleteCalculation(id){
+                if (!confirm('Are you sure you want to delete this calculation?')) {
+                    return
+                }
+                axios.delete('http://esheet.test/calculations/' + id)
+                    .then((r) => {
+                        this.refresh();
                     })
                     .catch((e) => console.log(e));
             }
