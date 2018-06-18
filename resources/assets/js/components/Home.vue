@@ -43,7 +43,9 @@
                 <div class="card">
                     <div class="card-header">Sheets
                         <div class="float-right" v-if="project_id !== ''">
-                            <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#new-sheet">New Sheet</button>
+                            <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#new-sheet">
+                                New Sheet
+                            </button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -64,20 +66,19 @@
                                     <td>{{ sheet.name }}</td>
                                     <td>{{ sheet.created_at }}</td>
                                     <td>
-                                        <router-link v-bind:to="'/sheet/'+sheet.id" class="btn btn-sm btn-outline-primary">View Sheet</router-link>
+                                        <router-link v-bind:to="'/sheet/'+sheet.id"
+                                                     class="btn btn-sm btn-outline-primary">View Sheet
+                                        </router-link>
                                     </td>
                                     <td>
-                                        <div class="row">
-                                            <div class="col"><a href="javascript:void(0)"><i
-                                                    class="fa fa-trash text-danger"></i></a></div>
-                                            <div class="col"><a href="javascript:void(0)"><i
-                                                    class="fa fa-edit text-info"></i></a></div>
-                                        </div>
+                                        <a href="javascript:void(0)" v-on:click="deleteSheet(sheet.id)"><i class="fa fa-trash text-danger"></i></a>
+                                        <a href="javascript:void(0)"  data-toggle="modal" data-target="#edit-sheet" v-on:click="setSheetId(sheet.id, sheet.name)"><i class="fa fa-edit text-info"></i></a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <sheet-pagination :data="sheets" @pagination-change-page="getSheets" class="mt-2"></sheet-pagination>
+                            <sheet-pagination :data="sheets" @pagination-change-page="getSheets"
+                                              class="mt-2"></sheet-pagination>
                         </div>
                         <div v-else>
                             No Sheet Found
@@ -88,6 +89,7 @@
         </div>
         <new-project @newProjectCreated="refresh"></new-project>
         <new-sheet @newSheetCreated="refreshSheets" v-bind:project_id="project_id"></new-sheet>
+        <edit-sheet @sheetUpdated="refreshSheets" v-bind:project_id="project_id" v-bind:sheet_id="sheet_id" v-bind:sheet_name="sheet_name"></edit-sheet>
     </div>
 </template>
 
@@ -99,10 +101,19 @@
     Vue.component('sheet-pagination', require('laravel-vue-pagination'));
     Vue.component('newProject', require('./NewProject'));
     Vue.component('newSheet', require('./NewSheet'));
+    Vue.component('editSheet', require('./EditSheet'));
     export default {
         name: "Home",
         data() {
-            return {'projects': {}, 'sheets': [], 'project_id': '', 'length': '', 'sheets_length': ''}
+            return {
+                'projects': {},
+                'sheets': [],
+                'project_id': '',
+                'length': '',
+                'sheets_length': '',
+                'sheet_id': '',
+                'sheet_name': ''
+            }
         },
         mounted() {
             axios.get('http://esheet.test/projects')
@@ -133,8 +144,20 @@
             refresh(response) {
                 this.projects = response;
             },
-            refreshSheets(response){
+            refreshSheets(response) {
                 this.sheets = response;
+            },
+            setSheetId(id, sheet_name){
+                this.sheet_id = id;
+                this.sheet_name = sheet_name;
+            },
+            deleteSheet(id){
+                if (!confirm('Are you sure you want to delete this sheet?')) {
+                    return
+                }
+                axios.delete('http://esheet.test/sheets/'+ id)
+                    .then((r) => this.loadSheets(this.project_id))
+                    .catch((e) => console.log(e))
             }
         }
     }

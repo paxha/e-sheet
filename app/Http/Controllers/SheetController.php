@@ -100,9 +100,9 @@ class SheetController extends Controller
      * @param  \App\Sheet $sheet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Sheet $sheet)
+    public function destroy(Request $request, Sheet $sheet)
     {
-        //
+        $sheet->delete();
     }
 
     public function showByProject(Project $project)
