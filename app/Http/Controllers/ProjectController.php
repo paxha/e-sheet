@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -14,7 +15,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        return $this->projects();
     }
 
     /**
@@ -35,7 +36,26 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        return 'storing project';
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:191',
+            'description' => 'string|max:191'
+        ]);
+
+        if ($validator->fails()){
+            return $validator->errors();
+        }
+
+        $user_id = auth()->user()->id;
+
+        $project = new Project();
+
+        $project->user_id = $user_id;
+        $project->name = $request->name;
+        $project->description = $request->description;
+
+        $project->save();
+
+        return $this->projects();
     }
 
     /**
@@ -46,7 +66,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return Project::with('sheets')->where('id', $project->id)->get();
     }
 
     /**
@@ -81,5 +101,10 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         //
+    }
+
+    private function projects(){
+        $user_id = auth()->user()->id;
+        return Project::where('user_id', $user_id)->orderBy('created_at', 'DESC')->paginate(5);
     }
 }

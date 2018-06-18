@@ -25,4 +25,6 @@ Route::get('/test', function () {
 
 Route::resource('projects', 'ProjectController');
 Route::resource('sheets', 'SheetController');
+Route::get('project-sheets/{project}', 'SheetController@showByProject');
 Route::resource('calculations', 'CalculationController');
+Route::get('sheet-calculations/{sheet}', 'CalculationController@showBySheet');

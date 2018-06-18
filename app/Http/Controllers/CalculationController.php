@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Calculation;
+use App\Sheet;
 use Illuminate\Http\Request;
 
 class CalculationController extends Controller
@@ -81,5 +82,9 @@ class CalculationController extends Controller
     public function destroy(Calculation $calculation)
     {
         //
+    }
+
+    public function showBySheet(Sheet $sheet){
+        return Calculation::where('sheet_id', $sheet->id)->get();
     }
 }
