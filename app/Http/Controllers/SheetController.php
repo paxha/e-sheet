@@ -107,6 +107,6 @@ class SheetController extends Controller
 
     public function showByProject(Project $project)
     {
-        return Sheet::where('project_id', $project->id)->orderBy('created_at', 'DESC')->paginate(10);
+        return Sheet::with('project')->where('project_id', $project->id)->orderBy('created_at', 'DESC')->paginate(10);
     }
 }

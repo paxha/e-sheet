@@ -25364,8 +25364,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue_router__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Home__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__components_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__components_Home__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Sheet__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Sheet___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_Sheet__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Sheets__ = __webpack_require__(90);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Sheets___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_Sheets__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Sheet__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Sheet___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_Sheet__);
 
 __webpack_require__(18);
 
@@ -25378,12 +25380,17 @@ Vue.use(__WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]);
 
 
 
+
 var routes = [{
     path: '/',
     component: __WEBPACK_IMPORTED_MODULE_1__components_Home___default.a
 }, {
+    path: '/sheets/:project_id',
+    component: __WEBPACK_IMPORTED_MODULE_2__components_Sheets___default.a,
+    props: true
+}, {
     path: '/sheet/:sheet_id',
-    component: __WEBPACK_IMPORTED_MODULE_2__components_Sheet___default.a,
+    component: __WEBPACK_IMPORTED_MODULE_3__components_Sheet___default.a,
     props: true
 }];
 
@@ -50398,7 +50405,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -50489,153 +50496,40 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
 window.Vue = __WEBPACK_IMPORTED_MODULE_0_vue___default.a;
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('project-pagination', __webpack_require__(15));
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('sheet-pagination', __webpack_require__(15));
 __WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('newProject', __webpack_require__(49));
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('newSheet', __webpack_require__(54));
-__WEBPACK_IMPORTED_MODULE_0_vue___default.a.component('editSheet', __webpack_require__(59));
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "Home",
     data: function data() {
         return {
             'projects': {},
-            'sheets': [],
-            'project_id': '',
-            'length': '',
-            'sheets_length': '',
-            'selectedSheet': {}
+            'length': ''
         };
     },
     mounted: function mounted() {
-        var _this = this;
-
-        axios.get('http://esheet.test/projects').then(function (r) {
-            _this.projects = r.data;
-            _this.length = _this.projects.data.length;
-        }).catch(function (e) {
-            return console.log(e);
-        });
+        this.refresh();
     },
 
     methods: {
-        loadSheets: function loadSheets(id) {
-            var _this2 = this;
-
-            this.project_id = id;
-            axios.get('http://esheet.test/project-sheets/' + id).then(function (r) {
-                _this2.sheets = r.data;
-                _this2.sheets_length = _this2.sheets.data.length;
-            }).catch(function (e) {
-                return console.log(e);
-            });
-        },
         getResults: function getResults() {
-            var _this3 = this;
+            var _this = this;
 
             var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
             axios.get('http://esheet.test/projects?page=' + page).then(function (response) {
-                return _this3.projects = response.data;
+                return _this.projects = response.data;
             });
         },
-        getSheets: function getSheets() {
-            var _this4 = this;
-
-            var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-
-            axios.get('http://esheet.test/project-sheets/' + this.project_id + '/?page=' + page).then(function (response) {
-                return _this4.sheets = response.data;
-            });
-        },
-        refresh: function refresh(response) {
-            var _this5 = this;
+        refresh: function refresh() {
+            var _this2 = this;
 
             axios.get('http://esheet.test/projects').then(function (r) {
-                _this5.projects = r.data;
-                _this5.length = _this5.projects.data.length;
-            }).catch(function (e) {
-                return console.log(e);
-            });
-        },
-        refreshSheets: function refreshSheets(response) {
-            this.loadSheets(this.project_id);
-        },
-        setSheet: function setSheet(id) {
-            var _this6 = this;
-
-            axios.get('http://esheet.test/sheets/' + id).then(function (r) {
-                return _this6.selectedSheet = r.data;
-            }).catch(function (e) {
-                return console.log(e);
-            });
-        },
-        deleteSheet: function deleteSheet(id) {
-            var _this7 = this;
-
-            if (!confirm('Are you sure you want to delete this sheet?')) {
-                return;
-            }
-            axios.delete('http://esheet.test/sheets/' + id).then(function (r) {
-                return _this7.loadSheets(_this7.project_id);
+                _this2.projects = r.data;
+                _this2.length = _this2.projects.data.length;
             }).catch(function (e) {
                 return console.log(e);
             });
@@ -51517,244 +51411,67 @@ var render = function() {
     "div",
     { staticClass: "container" },
     [
-      _c("div", { staticClass: "row" }, [
-        _c("div", { staticClass: "col-sm-4" }, [
-          _c("div", { staticClass: "list-group" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _vm.length > 0
-              ? _c(
-                  "div",
-                  [
-                    _vm._l(_vm.projects.data, function(project, index) {
-                      return _c(
-                        "a",
-                        {
-                          staticClass:
-                            "list-group-item list-group-item-action flex-column align-items-start",
-                          attrs: { href: "javascript:void(0)" },
-                          on: {
-                            click: function($event) {
-                              _vm.loadSheets(project.id)
-                            }
-                          }
-                        },
-                        [
-                          _c(
-                            "div",
-                            {
-                              staticClass:
-                                "d-flex w-100 justify-content-between"
-                            },
-                            [
-                              _c("h5", { staticClass: "mb-1" }, [
-                                _vm._v(_vm._s(project.name))
-                              ]),
-                              _vm._v(" "),
-                              _c("small", { staticClass: "text-muted" }, [
-                                _vm._v(_vm._s(project.created_at))
-                              ])
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c("small", { staticClass: "text-muted" }, [
-                            _vm._v(_vm._s(project.description))
-                          ])
-                        ]
-                      )
-                    }),
-                    _vm._v(" "),
+      _c("div", { staticClass: "card" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body" }, [
+          _vm.length > 0
+            ? _c(
+                "div",
+                [
+                  _c("table", { staticClass: "table" }, [
                     _vm._m(1),
                     _vm._v(" "),
                     _c(
-                      "div",
-                      {
-                        staticClass:
-                          "list-group-item list-group-item-action flex-column align-items-start text-center"
-                      },
-                      [
-                        _c("project-pagination", {
-                          staticClass: "mt-2",
-                          attrs: { data: _vm.projects },
-                          on: { "pagination-change-page": _vm.getResults }
-                        })
-                      ],
-                      1
-                    )
-                  ],
-                  2
-                )
-              : _c("div", [
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "list-group-item list-group-item-action flex-column align-items-start text-center",
-                      attrs: {
-                        href: "javascript:void(0)",
-                        "data-toggle": "modal",
-                        "data-target": "#new-project"
-                      }
-                    },
-                    [
-                      _c(
-                        "div",
-                        { staticClass: "w-100 justify-content-between" },
-                        [
-                          _c("h3", { staticClass: "mb-1" }, [
-                            _vm._v(_vm._s("No Project Found"))
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("p", { staticClass: "mb-1" }, [
-                        _vm._v("Click To Create New Project")
-                      ])
-                    ]
-                  )
-                ])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "col-sm-8" }, [
-          _c("div", { staticClass: "card" }, [
-            _c("div", { staticClass: "card-header" }, [
-              _vm._v("Sheets\n                    "),
-              _vm.project_id !== ""
-                ? _c("div", { staticClass: "float-right" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-sm btn-outline-primary",
-                        attrs: {
-                          "data-toggle": "modal",
-                          "data-target": "#new-sheet"
-                        }
-                      },
-                      [
-                        _vm._v(
-                          "\n                            New Sheet\n                        "
-                        )
-                      ]
-                    )
-                  ])
-                : _vm._e()
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "card-body" }, [
-              _vm.sheets_length > 0
-                ? _c(
-                    "div",
-                    [
-                      _c("table", { staticClass: "table table-striped" }, [
-                        _vm._m(2),
-                        _vm._v(" "),
-                        _c(
-                          "tbody",
-                          _vm._l(_vm.sheets.data, function(sheet, index) {
-                            return _c("tr", [
-                              _c("th", [_vm._v(_vm._s(++index))]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(sheet.name))]),
-                              _vm._v(" "),
-                              _c("td", [_vm._v(_vm._s(sheet.created_at))]),
-                              _vm._v(" "),
+                      "tbody",
+                      _vm._l(_vm.projects.data, function(project, index) {
+                        return _c("tr", [
+                          _c("th", [_vm._v(_vm._s(++index))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(project.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(project.description))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(project.created_at))]),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            [
                               _c(
-                                "td",
-                                [
-                                  _c(
-                                    "router-link",
-                                    {
-                                      staticClass:
-                                        "btn btn-sm btn-outline-primary",
-                                      attrs: { to: "/sheet/" + sheet.id }
-                                    },
-                                    [
-                                      _vm._v(
-                                        "View Sheet\n                                    "
-                                      )
-                                    ]
-                                  )
-                                ],
-                                1
-                              ),
-                              _vm._v(" "),
-                              _c("td", [
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "btn btn-sm btn-outline-danger",
-                                    on: {
-                                      click: function($event) {
-                                        _vm.deleteSheet(sheet.id)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c("i", { staticClass: "fa fa-trash" }),
-                                    _vm._v(
-                                      " Trash\n                                    "
-                                    )
-                                  ]
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn btn-sm btn-outline-info",
-                                    attrs: {
-                                      "data-toggle": "modal",
-                                      "data-target": "#edit-sheet"
-                                    },
-                                    on: {
-                                      click: function($event) {
-                                        _vm.setSheet(sheet.id)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _c("i", { staticClass: "fa fa-edit" }),
-                                    _vm._v(
-                                      " Edit\n                                    "
-                                    )
-                                  ]
-                                )
-                              ])
-                            ])
-                          })
-                        )
-                      ]),
-                      _vm._v(" "),
-                      _c("sheet-pagination", {
-                        staticClass: "mt-2",
-                        attrs: { data: _vm.sheets },
-                        on: { "pagination-change-page": _vm.getSheets }
+                                "router-link",
+                                {
+                                  staticClass: "btn btn-sm btn-outline-primary",
+                                  attrs: { to: "/sheets/" + project.id }
+                                },
+                                [_vm._v("Start Work")]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _vm._m(2, true)
+                        ])
                       })
-                    ],
-                    1
-                  )
-                : _c("div", [
-                    _vm._v(
-                      "\n                        No Sheet Found\n                    "
                     )
-                  ])
-            ])
-          ])
+                  ]),
+                  _vm._v(" "),
+                  _c("project-pagination", {
+                    staticClass: "mt-2",
+                    attrs: { data: _vm.projects },
+                    on: { "pagination-change-page": _vm.getResults }
+                  })
+                ],
+                1
+              )
+            : _c("div", [
+                _c("h4", { staticClass: "text-muted" }, [
+                  _vm._v("No Project Created!")
+                ])
+              ])
         ])
       ]),
       _vm._v(" "),
-      _c("new-project", { on: { newProjectCreated: _vm.refresh } }),
-      _vm._v(" "),
-      _c("new-sheet", {
-        attrs: { project_id: _vm.project_id },
-        on: { newSheetCreated: _vm.refreshSheets }
-      }),
-      _vm._v(" "),
-      _c("edit-sheet", {
-        attrs: { project_id: _vm.project_id, sheet: _vm.selectedSheet },
-        on: { sheetUpdated: _vm.refreshSheets }
-      })
+      _c("new-project", { on: { newProjectCreated: _vm.refresh } })
     ],
     1
   )
@@ -51764,36 +51481,17 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass:
-          "list-group-item list-group-item-action flex-column align-items-start active"
-      },
-      [
-        _c("div", { staticClass: "d-flex w-100 justify-content-between" }, [
-          _c("h5", { staticClass: "mb-1" }, [_vm._v("Projects")])
-        ])
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "a",
-      {
-        staticClass:
-          "list-group-item list-group-item-info list-group-item-action flex-column align-items-start text-center",
-        attrs: {
-          href: "javascript:void(0)",
-          "data-toggle": "modal",
-          "data-target": "#new-project"
-        }
-      },
-      [_c("p", { staticClass: "mb-1" }, [_vm._v("New Project")])]
-    )
+    return _c("div", { staticClass: "card-header" }, [
+      _vm._v("\n            Projects\n            "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-sm btn-primary float-right",
+          attrs: { "data-toggle": "modal", "data-target": "#new-project" }
+        },
+        [_vm._v("New Project")]
+      )
+    ])
   },
   function() {
     var _vm = this
@@ -51805,11 +51503,29 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Name")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Description")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Created At")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Start Work")]),
+        _c("th", [_vm._v("Start")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", [
+      _c("button", { staticClass: "btn btn-sm btn-outline-danger" }, [
+        _c("i", { staticClass: "fa fa-trash" }),
+        _vm._v(" Trash")
+      ]),
+      _vm._v(" "),
+      _c("button", { staticClass: "btn btn-sm btn-outline-info" }, [
+        _c("i", { staticClass: "fa fa-edit" }),
+        _vm._v(" Edit")
       ])
     ])
   }
@@ -53256,6 +52972,378 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-7f3891f8", module.exports)
+  }
+}
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(91)
+}
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(93)
+/* template */
+var __vue_template__ = __webpack_require__(94)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-471949eb"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Sheets.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-471949eb", Component.options)
+  } else {
+    hotAPI.reload("data-v-471949eb", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(92);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(3)("7582df07", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-471949eb\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Sheets.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-471949eb\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./Sheets.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(2)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 93 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+Vue.component('sheet-pagination', __webpack_require__(15));
+Vue.component('newSheet', __webpack_require__(54));
+Vue.component('editSheet', __webpack_require__(59));
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "Sheets",
+    props: ['project_id'],
+    data: function data() {
+        return {
+            'length': '',
+            'sheets': [],
+            'selectedSheet': {},
+            'project_name': ''
+        };
+    },
+    mounted: function mounted() {
+        this.refresh();
+    },
+
+    methods: {
+        refresh: function refresh() {
+            var _this = this;
+
+            axios.get('http://esheet.test/project-sheets/' + this.project_id).then(function (r) {
+                _this.sheets = r.data;
+                _this.length = _this.sheets.data.length;
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        },
+        getSheets: function getSheets() {
+            var _this2 = this;
+
+            var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+            axios.get('http://esheet.test/project-sheets/' + this.project_id + '/?page=' + page).then(function (response) {
+                return _this2.sheets = response.data;
+            });
+        },
+        setSheet: function setSheet(id) {
+            var _this3 = this;
+
+            axios.get('http://esheet.test/sheets/' + id).then(function (r) {
+                return _this3.selectedSheet = r.data;
+            }).catch(function (e) {
+                return console.log(e);
+            });
+        },
+        deleteSheet: function deleteSheet(id) {
+            if (!confirm('Are you sure you want to delete this sheet?')) {
+                return;
+            }
+            axios.delete('http://esheet.test/sheets/' + id).then(this.refresh()).catch(function (e) {
+                return console.log(e);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "container" },
+    [
+      _c("div", { staticClass: "card" }, [
+        _vm._m(0),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body" }, [
+          _vm.length > 0
+            ? _c(
+                "div",
+                [
+                  _c("table", { staticClass: "table table-striped" }, [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c(
+                      "tbody",
+                      _vm._l(_vm.sheets.data, function(sheet, index) {
+                        return _c("tr", [
+                          _c("th", [_vm._v(_vm._s(++index))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(sheet.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(sheet.created_at))]),
+                          _vm._v(" "),
+                          _c(
+                            "td",
+                            [
+                              _c(
+                                "router-link",
+                                {
+                                  staticClass: "btn btn-sm btn-outline-primary",
+                                  attrs: { to: "/sheet/" + sheet.id }
+                                },
+                                [
+                                  _vm._v(
+                                    "View Sheet\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("td", [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-sm btn-outline-danger",
+                                on: {
+                                  click: function($event) {
+                                    _vm.deleteSheet(sheet.id)
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fa fa-trash" }),
+                                _vm._v(" Trash")
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-sm btn-outline-info",
+                                attrs: {
+                                  "data-toggle": "modal",
+                                  "data-target": "#edit-sheet"
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.setSheet(sheet.id)
+                                  }
+                                }
+                              },
+                              [
+                                _c("i", { staticClass: "fa fa-edit" }),
+                                _vm._v(" Edit")
+                              ]
+                            )
+                          ])
+                        ])
+                      })
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("sheet-pagination", {
+                    staticClass: "mt-2",
+                    attrs: { data: _vm.sheets },
+                    on: { "pagination-change-page": _vm.getSheets }
+                  })
+                ],
+                1
+              )
+            : _c("div", [
+                _c("h4", { staticClass: "text-muted" }, [
+                  _vm._v("No Sheet Created!")
+                ])
+              ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("new-sheet", {
+        attrs: { project_id: _vm.project_id },
+        on: { newSheetCreated: _vm.refresh }
+      }),
+      _vm._v(" "),
+      _c("edit-sheet", {
+        attrs: { project_id: _vm.project_id, sheet: _vm.selectedSheet },
+        on: { sheetUpdated: _vm.refresh }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header" }, [
+      _vm._v("\n            Sheets\n            "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-sm btn-primary float-right",
+          attrs: { "data-toggle": "modal", "data-target": "#new-sheet" }
+        },
+        [_vm._v("New Sheet")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Created At")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Start Work")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-471949eb", module.exports)
   }
 }
 
